@@ -1,15 +1,11 @@
 <a href="https://www.hardwario.com/"><img src="https://www.hardwario.com/ci/assets/hw-logo.svg" width="200" alt="HARDWARIO Logo" align="right"></a>
 
-# Firmware for HARDWARIO Radio Climate Monitor
+# Firmware for HARDWARIO Radio IR CO2 Monitor
 
-[![build](https://github.com/hardwario/twr-radio-climate-monitor/actions/workflows/main.yml/badge.svg)](https://github.com/hardwario/twr-radio-climate-monitor/actions/workflows/main.yml)
-[![Release](https://img.shields.io/github/release/bigclownlabs/bcf-radio-climate-monitor.svg)](https://github.com/bigclownlabs/bcf-radio-climate-monitor/releases)
-[![License](https://img.shields.io/github/license/bigclownlabs/bcf-radio-climate-monitor.svg)](https://github.com/bigclownlabs/bcf-radio-climate-monitor/blob/master/LICENSE)
+[![build](https://github.com/hardwario/twr-radio-ir-co2-monitor/actions/workflows/main.yml/badge.svg)](https://github.com/hardwario/twr-radio-ir-co2-monitor/actions/workflows/main.yml)
+[![Release](https://img.shields.io/github/release/bigclownlabs/twr-radio-ir-co2-monitor.svg)](https://github.com/bigclownlabs/twr-radio-ir-co2-monitor/releases)
+[![License](https://img.shields.io/github/license/bigclownlabs/twr-radio-ir-co2-monitor.svg)](https://github.com/bigclownlabs/twr-radio-ir-co2-monitor/blob/master/LICENSE)
 [![Twitter](https://img.shields.io/twitter/follow/hardwario_en.svg?style=social&label=Follow)](https://twitter.com/hardwario_en)
-
-See the project documentation on this link:
-
-**https://developers.hardwario.com/projects/radio-climate-monitor/**
 
 ## License
 
