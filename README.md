@@ -4,7 +4,7 @@
 
 [![build](https://github.com/hardwario/twr-radio-ir-co2-monitor/actions/workflows/main.yml/badge.svg)](https://github.com/hardwario/twr-radio-ir-co2-monitor/actions/workflows/main.yml)
 [![Release](https://img.shields.io/github/release/hardwario/twr-radio-ir-co2-monitor.svg)](https://github.com/hardwario/twr-radio-ir-co2-monitor/releases)
-[![License](https://img.shields.io/github/license/hardwario/twr-radio-ir-co2-monitor.svg)](https://github.com/hardwario/twr-radio-ir-co2-monitor/blob/master/LICENSE)
+[![License](https://img.shields.io/github/license/hardwario/twr-radio-ir-co2-monitor.svg)](https://github.com/hardwario/twr-radio-ir-co2-monitor/blob/main/LICENSE)
 [![Twitter](https://img.shields.io/twitter/follow/hardwario_en.svg?style=social&label=Follow)](https://twitter.com/hardwario_en)
 
 ## License
