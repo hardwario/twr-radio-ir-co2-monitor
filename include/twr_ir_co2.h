@@ -49,8 +49,7 @@ struct twr_ir_co2_t
 
 void twr_ir_co2_init(twr_ir_co2_t *self, twr_uart_channel_t uart_channel);
 
-void twr_ir_co2_set_event_handler(twr_ir_co2_t *self,
-        void (*event_handler)(twr_ir_co2_t *, twr_ir_co2_event_t));
+void twr_ir_co2_set_event_handler(twr_ir_co2_t *self, void (*event_handler)(twr_ir_co2_t *, twr_ir_co2_event_t));
 
 void twr_ir_co2_set_update_interval(twr_ir_co2_t *self, twr_tick_t interval);
 
@@ -63,6 +62,8 @@ void twr_ir_co2_get_temperature_raw(twr_ir_co2_t *self, int *temperature_raw);
 void twr_ir_co2_get_concentration(twr_ir_co2_t *self, float *concentration);
 
 void twr_ir_co2_get_concentration_raw(twr_ir_co2_t *self, int *concentration);
+
+void twr_ir_co2_get_concentration_ppm(twr_ir_co2_t *self, int *concentration_ppm);
 
 void twr_ir_co2_get_pressure(twr_ir_co2_t *self, int *pressure);
 

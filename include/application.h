@@ -9,12 +9,4 @@
 #include <bcl.h>
 #include <twr_ir_co2.h>
 
-typedef struct
-{
-    uint8_t channel;
-    float value;
-    twr_tick_t next_pub;
-
-} event_param_t;
-
 #endif // _APPLICATION_H
