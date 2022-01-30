@@ -4,7 +4,7 @@ static void _twr_ir_co2_task_interval(void *param);
 
 static void _twr_ir_co2_task_measure(void *param);
 
-#define _TWR_IR_CO2_DELAY_RUN 9000
+#define _TWR_IR_CO2_DELAY_RUN (9500)
 
 void twr_ir_co2_init(twr_ir_co2_t *self, twr_uart_channel_t channel)
 {
@@ -16,6 +16,21 @@ void twr_ir_co2_init(twr_ir_co2_t *self, twr_uart_channel_t channel)
 
     self->_task_id_interval = twr_scheduler_register(_twr_ir_co2_task_interval, self, TWR_TICK_INFINITY);
     self->_task_id_measure = twr_scheduler_register(_twr_ir_co2_task_measure, self, _TWR_IR_CO2_DELAY_RUN);
+
+}
+
+char twr_ir_co2_zero_point_adjustment(twr_ir_co2_t *self)
+{
+    uint8_t data[8] = {0x02, 0x31, 0x32, 0x30, 0x33, 0x34, 0x30, 0x03};
+
+    int bytes_written = 0;
+    bytes_written = twr_uart_write(self->_channel, data, sizeof(data));
+
+    uint8_t read_data[3];
+
+    int bytes_read = twr_uart_read(self->_channel, read_data, sizeof(read_data), 200);
+
+    return read_data[1];
 }
 
 void twr_ir_co2_set_event_handler(twr_ir_co2_t *self,
@@ -176,16 +191,21 @@ static void _twr_ir_co2_task_measure(void *param)
         case TWR_IR_CO2_STATE_READ:
         {
             self->_state = TWR_IR_CO2_STATE_ERROR;
-            uint8_t read_data[40];
+            uint8_t read_data[50];
             int data_index = 0;
 
-            int bytes_read = twr_uart_read(self->_channel, read_data, sizeof(read_data), 1000);
+            int bytes_read = twr_uart_read(self->_channel, read_data, sizeof(read_data), 200);
 
             char sensor_id_array[15];
             char timestamp_array[15];
             char concentration_array[10];
             char temperature_array[5];
             char pressure_array[15];
+
+            for(int i = 0; i < bytes_read; i++)
+            {
+                twr_log_debug("%d: %c", i, read_data[i]);
+            }
 
             int index = 0;
             for (int i = 1; i < bytes_read - 1; i++)
@@ -198,12 +218,15 @@ static void _twr_ir_co2_task_measure(void *param)
                     case 3: temperature_array[index++] = (read_data[i] == 0x20 ? '\0' : read_data[i]); break;
                     case 4: pressure_array[index++] = (read_data[i] == 0x20 ? '\0' : read_data[i]); break;
                 }
+
                 if (read_data[i] == 0x20)
                 {
                     data_index++;
                     index = 0;
                 }
             }
+
+            twr_log_debug("Concentration %s", concentration_array);
 
             int sensor_id = 0;
             sensor_id = strtol(sensor_id_array, NULL, 10);
@@ -217,6 +240,8 @@ static void _twr_ir_co2_task_measure(void *param)
             concentration_raw = strtol(concentration_array, NULL, 10);
             self->_co2_concentration_raw = concentration_raw;
             self->_co2_concentration = (float)concentration_raw / 1000.0f;
+
+            twr_log_debug("Concentration RAW %ld", self->_co2_concentration_raw);
 
             int temperature_raw = 0;
             temperature_raw = strtol(temperature_array, NULL, 10);

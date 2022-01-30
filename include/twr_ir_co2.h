@@ -4,6 +4,8 @@
 
 #include <twr_scheduler.h>
 #include <twr_uart.h>
+#include <twr_log.h>
+
 
 typedef struct twr_ir_co2_t twr_ir_co2_t;
 
@@ -66,5 +68,7 @@ void twr_ir_co2_get_concentration_raw(twr_ir_co2_t *self, int *concentration);
 void twr_ir_co2_get_concentration_ppm(twr_ir_co2_t *self, int *concentration_ppm);
 
 void twr_ir_co2_get_pressure(twr_ir_co2_t *self, int *pressure);
+
+char twr_ir_co2_zero_point_adjustment(twr_ir_co2_t *self);
 
 #endif // _TWR_IR_CO2
