@@ -47,9 +47,9 @@ void ir_co2_event_handler(twr_ir_co2_t *self, twr_ir_co2_event_t event)
             twr_log_debug("Concentration ppm %d", concentration_ppm);*/
 
             // To get the temperature from the sensor
-            /*float temperature;
+            float temperature;
             twr_ir_co2_get_temperature(self, &temperature);
-            twr_radio_pub_float("temperature", &temperature);*/
+            twr_radio_pub_float("temperature", &temperature);
 
             co2_next_pub = twr_scheduler_get_spin_tick() + CO2_PUB_INTERVAL;
         }
@@ -62,7 +62,7 @@ void ir_co2_event_handler(twr_ir_co2_t *self, twr_ir_co2_event_t event)
 
 void application_init(void)
 {
-    //twr_log_init(TWR_LOG_LEVEL_DUMP, TWR_LOG_TIMESTAMP_ABS);
+    twr_log_init(TWR_LOG_LEVEL_DUMP, TWR_LOG_TIMESTAMP_ABS);
 
     // Initialize LED
     twr_led_init(&led, TWR_GPIO_LED, false, false);
