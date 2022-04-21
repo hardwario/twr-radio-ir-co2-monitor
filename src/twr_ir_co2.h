@@ -32,11 +32,14 @@ struct twr_ir_co2_t
 {
     twr_scheduler_task_id_t _task_id_interval;
     twr_scheduler_task_id_t _task_id_measure;
+    twr_scheduler_task_id_t _calibration_task_id;
+    twr_scheduler_task_id_t _factory_reset_task_id;
 
     twr_uart_channel_t _channel;
 
     void (*_event_handler)(twr_ir_co2_t *, twr_ir_co2_event_t);
     bool _measurement_active;
+    bool _calibration_active;
     twr_tick_t _update_interval;
     twr_ir_co2_state_t _state;
 
@@ -69,6 +72,8 @@ void twr_ir_co2_get_concentration_ppm(twr_ir_co2_t *self, int *concentration_ppm
 
 void twr_ir_co2_get_pressure(twr_ir_co2_t *self, int *pressure);
 
-char twr_ir_co2_zero_point_adjustment(twr_ir_co2_t *self);
+void twr_ir_co2_zero_point_adjustment(void *param);
+
+void twr_ir_co2_factory_reset(void *param);
 
 #endif // _TWR_IR_CO2

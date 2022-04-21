@@ -1,6 +1,6 @@
 #include <application.h>
 
-#define CO2_PUB_INTERVAL (15 * 60 * 1000)
+#define CO2_PUB_INTERVAL (1 * 60 * 1000)
 #define CO2_UPDATE_INTERVAL 6000
 
 twr_led_t led;
@@ -13,17 +13,18 @@ void button_event_handler(twr_button_t *self, twr_button_event_t event, void *ev
     (void) self;
     (void) event_param;
 
-    if (event == TWR_BUTTON_EVENT_HOLD)
+    if (event == TWR_BUTTON_EVENT_CLICK)
     {
-        char response = twr_ir_co2_zero_point_adjustment(&ir_co2);
-        if(response == '0')
-        {
-            twr_led_blink(&led, 10);
-        }
-        else
-        {
-            twr_led_pulse(&led, 5000);
-        }
+        twr_log_debug("CLICK");
+        twr_ir_co2_zero_point_adjustment(&ir_co2);
+        twr_led_pulse(&led, 1000);
+    }
+    else if (event == TWR_BUTTON_EVENT_HOLD)
+    {
+        twr_log_debug("HOLD");
+        twr_ir_co2_factory_reset(&ir_co2);
+        twr_led_blink(&led, 5);
+
     }
 }
 
@@ -70,7 +71,7 @@ void application_init(void)
 
     twr_button_init(&button, TWR_GPIO_BUTTON, TWR_GPIO_PULL_DOWN,0);
     twr_button_set_event_handler(&button, button_event_handler, NULL);
-    twr_button_set_hold_time(&button, 1000);
+    twr_button_set_hold_time(&button, 2000);
 
     // Initialize radio
     twr_radio_init(TWR_RADIO_MODE_NODE_SLEEPING);
@@ -85,22 +86,4 @@ void application_init(void)
     twr_radio_pairing_request("ir-co2-monitor", VERSION);
 
     twr_led_pulse(&led, 2000);
-}
-
-void application_task()
-{
-    twr_log_debug("Application task");
-
-    // FACTORY RESET
-    /*uint8_t data[6] = {0x02, 0x35, 0x30, 0x30, 0x35, 0x03};
-
-    int bytes_written = 0;
-    bytes_written = twr_uart_write(TWR_UART_UART1, data, sizeof(data));
-
-    uint8_t read_data[3];
-
-    int bytes_read = twr_uart_read(TWR_UART_UART1, read_data, sizeof(read_data), 200);
-
-    twr_log_debug("DONE %d", read_data[1]);*/
-
 }

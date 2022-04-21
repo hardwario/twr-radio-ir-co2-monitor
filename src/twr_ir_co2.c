@@ -1,4 +1,5 @@
 #include <twr_ir_co2.h>
+#include <twr_delay.h>
 
 static void _twr_ir_co2_task_interval(void *param);
 
@@ -16,11 +17,55 @@ void twr_ir_co2_init(twr_ir_co2_t *self, twr_uart_channel_t channel)
 
     self->_task_id_interval = twr_scheduler_register(_twr_ir_co2_task_interval, self, TWR_TICK_INFINITY);
     self->_task_id_measure = twr_scheduler_register(_twr_ir_co2_task_measure, self, _TWR_IR_CO2_DELAY_RUN);
+    self->_calibration_task_id = twr_scheduler_register(twr_ir_co2_zero_point_adjustment, self, TWR_TICK_INFINITY);
+    self->_factory_reset_task_id = twr_scheduler_register(twr_ir_co2_factory_reset, self, TWR_TICK_INFINITY);
+}
+
+void twr_ir_co2_factory_reset(void *param)
+{
+    twr_ir_co2_t *self = param;
+
+    if(self->_measurement_active)
+    {
+        twr_log_debug("MEASURING");
+        twr_scheduler_plan_relative(self->_factory_reset_task_id, 200);
+        return;
+    }
+
+    self->_calibration_active = true;
+
+    uint8_t data[6] = {0x02, 0x35, 0x30, 0x30, 0x35, 0x03};
+
+    int bytes_written = 0;
+    bytes_written = twr_uart_write(self->_channel, data, sizeof(data));
+
+    twr_delay_us(60000);
+
+    uint8_t read_data[3];
+
+    for(int i = 0; i < 3; i++)
+    {
+        twr_log_debug("%d", read_data[i]);
+    }
+
+    int bytes_read = twr_uart_read(self->_channel, read_data, sizeof(read_data), 200);
+
+    twr_log_debug("DONE %d", read_data[2]);
+    self->_calibration_active = false;
 
 }
 
-char twr_ir_co2_zero_point_adjustment(twr_ir_co2_t *self)
+void twr_ir_co2_zero_point_adjustment(void *param)
 {
+    twr_ir_co2_t *self = param;
+
+    if(self->_measurement_active)
+    {
+        twr_scheduler_plan_relative(self->_calibration_task_id, 200);
+        return;
+    }
+    self->_calibration_active = true;
+
     uint8_t data[8] = {0x02, 0x31, 0x32, 0x30, 0x33, 0x34, 0x30, 0x03};
 
     int bytes_written = 0;
@@ -29,6 +74,10 @@ char twr_ir_co2_zero_point_adjustment(twr_ir_co2_t *self)
     uint8_t read_data[3];
 
     int bytes_read = twr_uart_read(self->_channel, read_data, sizeof(read_data), 200);
+
+    twr_log_debug("DONE %d", read_data[2]);
+
+    self->_calibration_active = false;
 
     return read_data[1];
 }
@@ -172,6 +221,11 @@ static void _twr_ir_co2_task_measure(void *param)
         }
         case TWR_IR_CO2_STATE_MEASURE:
         {
+            if(self->_calibration_active)
+            {
+                twr_scheduler_plan_current_from_now(200);
+                return;
+            }
             self->_state = TWR_IR_CO2_STATE_ERROR;
 
             uint8_t data[6] = {0x02, 0x31, 0x31, 0x30, 0x30, 0x03};
@@ -190,6 +244,11 @@ static void _twr_ir_co2_task_measure(void *param)
         }
         case TWR_IR_CO2_STATE_READ:
         {
+            if(self->_calibration_active)
+            {
+                twr_scheduler_plan_current_from_now(200);
+                return;
+            }
             self->_state = TWR_IR_CO2_STATE_ERROR;
             uint8_t read_data[50];
             int data_index = 0;
@@ -258,6 +317,11 @@ static void _twr_ir_co2_task_measure(void *param)
 
         case TWR_IR_CO2_STATE_UPDATE:
         {
+            if(self->_calibration_active)
+            {
+                twr_scheduler_plan_current_from_now(200);
+                return;
+            }
             self->_measurement_active = false;
 
             self->_state = TWR_IR_CO2_STATE_MEASURE;
