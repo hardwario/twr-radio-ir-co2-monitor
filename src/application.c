@@ -83,7 +83,7 @@ void application_init(void)
 
     twr_scheduler_plan_from_now(0, 4000);
 
-    twr_radio_pairing_request("ir-co2-monitor", VERSION);
+    twr_radio_pairing_request("ir-co2-monitor", FW_VERSION);
 
     twr_led_pulse(&led, 2000);
 }

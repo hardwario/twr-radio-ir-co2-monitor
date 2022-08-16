@@ -36,8 +36,7 @@ void twr_ir_co2_factory_reset(void *param)
 
     uint8_t data[6] = {0x02, 0x35, 0x30, 0x30, 0x35, 0x03};
 
-    int bytes_written = 0;
-    bytes_written = twr_uart_write(self->_channel, data, sizeof(data));
+    twr_uart_write(self->_channel, data, sizeof(data));
 
     twr_delay_us(60000);
 
@@ -48,7 +47,7 @@ void twr_ir_co2_factory_reset(void *param)
         twr_log_debug("%d", read_data[i]);
     }
 
-    int bytes_read = twr_uart_read(self->_channel, read_data, sizeof(read_data), 200);
+    twr_uart_read(self->_channel, read_data, sizeof(read_data), 200);
 
     twr_log_debug("DONE %d", read_data[2]);
     self->_calibration_active = false;
@@ -68,18 +67,15 @@ void twr_ir_co2_zero_point_adjustment(void *param)
 
     uint8_t data[8] = {0x02, 0x31, 0x32, 0x30, 0x33, 0x34, 0x30, 0x03};
 
-    int bytes_written = 0;
-    bytes_written = twr_uart_write(self->_channel, data, sizeof(data));
+    twr_uart_write(self->_channel, data, sizeof(data));
 
     uint8_t read_data[3];
 
-    int bytes_read = twr_uart_read(self->_channel, read_data, sizeof(read_data), 200);
+    twr_uart_read(self->_channel, read_data, sizeof(read_data), 200);
 
     twr_log_debug("DONE %d", read_data[2]);
 
     self->_calibration_active = false;
-
-    return read_data[1];
 }
 
 void twr_ir_co2_set_event_handler(twr_ir_co2_t *self,
@@ -276,6 +272,7 @@ static void _twr_ir_co2_task_measure(void *param)
                     case 2: concentration_array[index++] = (read_data[i] == 0x20 ? '\0' : read_data[i]); break;
                     case 3: temperature_array[index++] = (read_data[i] == 0x20 ? '\0' : read_data[i]); break;
                     case 4: pressure_array[index++] = (read_data[i] == 0x20 ? '\0' : read_data[i]); break;
+                    default: break;
                 }
 
                 if (read_data[i] == 0x20)
