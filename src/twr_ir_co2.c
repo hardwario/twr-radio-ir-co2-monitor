@@ -208,7 +208,7 @@ static void _twr_ir_co2_task_measure(void *param)
 
             if (self->_event_handler != NULL)
             {
-                self->_event_handler(self, TWR_IR_CO2_STATE_ERROR);
+                self->_event_handler(self, TWR_IR_CO2_EVENT_ERROR);
             }
 
             self->_state = TWR_IR_CO2_STATE_MEASURE;
