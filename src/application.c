@@ -1,6 +1,6 @@
 #include <application.h>
 
-#define CO2_PUB_INTERVAL (1 * 60 * 1000)
+#define CO2_PUB_INTERVAL (15 * 60 * 1000)
 #define CO2_UPDATE_INTERVAL 6000
 
 twr_led_t led;
