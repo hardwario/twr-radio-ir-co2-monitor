@@ -1,5 +1,8 @@
 name: main
 
+permissions:
+  contents: write
+
 on:
   push:
     branches: [ main, master ]
@@ -12,7 +15,7 @@ on:
 env:
   BUILD_TYPE: release
   FW_VERSION: ${GITHUB_REF##*/}
-  REPOSITORY_NAME: ${GITHUB_REPOSITORY##*/}
+  REPOSITORY_NAME: ${{ github.event.repository.name }}
 
 jobs:
   build:
@@ -22,11 +25,11 @@ jobs:
       with:
         submodules: recursive
     - name: Setup GNU Arm Embedded Toolchain
-      uses: carlosperate/arm-none-eabi-gcc-action@v1.4.0
+      uses: carlosperate/arm-none-eabi-gcc-action@v1
 
     - name: Setup env
       run: |
-        echo "REPORSIORY=${{env.REPOSITORY_NAME}}" >> "$GITHUB_ENV"
+        echo "REPOSITORY=${{env.REPOSITORY_NAME}}" >> "$GITHUB_ENV"
         echo "FW_VERSION=${{env.FW_VERSION}}" >> "$GITHUB_ENV"
 
     - name: Setup Ninja
@@ -44,8 +47,8 @@ jobs:
 
     - name: Release
       if: ${{ github.event_name == 'release' }}
-      uses: softprops/action-gh-release@v0.1.5
+      uses: softprops/action-gh-release@v1
       env:
         GITHUB_TOKEN: ${{ github.token }}
       with:
-        files: ${{env.REPORSIORY}}-${{env.FW_VERSION}}.bin
+        files: ${{env.REPOSITORY}}-${{env.FW_VERSION}}.bin
